@@ -47,6 +47,11 @@ export default defineConfig({
 })
 EOF
 
+cat <<EOF >.npmrc
+strict-peer-dependencies=true
+engine-strict=true
+EOF
+
 git add --all
 git commit -m 'Initial commit from create-project.sh'
 
@@ -64,6 +69,18 @@ Add a test script to your package.json:
     "test": "vitest"
   }
 }
+
+MANUAL STEP!!!
+
+Specify NodeJS version in your package.json:
+
+{
+  "engines": {
+    "node": "${latest_node_version}"
+  }
+}
+
+MANUAL STEP!!!
 
 Test that Vitest is set up correctly: https://nextjs.org/docs/app/building-your-application/testing/vitest#creating-your-first-vitest-unit-test
 EOF

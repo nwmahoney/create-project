@@ -1,5 +1,7 @@
 ### Usage
 
+Accept any defaults when prompted.
+
 ```
 <path-to-this-repo>/create-project.sh <project-name>
 cd <project-name>
