@@ -30,6 +30,7 @@ mv .tool-versions "${project_name}"
 
 cd "${starting_directory}"
 mv "${tmp_directory}/${project_name}" .
+rm -rf "${tmp_directory}"
 cd "${project_name}"
 
 pnpm install -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/dom
@@ -63,4 +64,6 @@ Add a test script to your package.json:
     "test": "vitest"
   }
 }
+
+Test that Vitest is set up correctly: https://nextjs.org/docs/app/building-your-application/testing/vitest#creating-your-first-vitest-unit-test
 EOF
