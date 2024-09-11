@@ -5,14 +5,16 @@ set -exu -o pipefail
 project_name="${1:?Missing required first argument (project-name). Usage: create-project <project-name>}"
 starting_directory="$(pwd)"
 tmp_directory="/tmp/${project_name}"
+script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
 mkdir "${tmp_directory}"
 cd "${tmp_directory}"
 
-# install latest version of node
-latest_node_version="$(asdf latest nodejs)"
-asdf local nodejs "${latest_node_version}"
-asdf install nodejs "${latest_node_version}"
+# install latest LTS version of node
+latest_lts_node_major_version="$(asdf nodejs resolve lts)"
+latest_lts_node_version="$(ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_available asdf nodejs resolve lts)"
+asdf install nodejs "${latest_lts_node_version}"
+asdf local nodejs "${latest_lts_node_version}"
 
 # use pnpm that comes with node
 corepack enable
@@ -52,10 +54,14 @@ strict-peer-dependencies=true
 engine-strict=true
 EOF
 
+mkdir -p .github/workflows
+cp "$script_directory/gha_cicd_workflow.yml" .github/workflows/cicd.yml
+
 git add --all
 git commit -m 'Initial commit from create-project.sh'
 
 cat <<EOF
+
 
 MANUAL STEP!!!
 
@@ -70,17 +76,39 @@ Add a test script to your package.json:
   }
 }
 
+
 MANUAL STEP!!!
 
 Specify NodeJS version in your package.json:
 
 {
   "engines": {
-    "node": "${latest_node_version}"
+    "node": "${latest_lts_node_major_version}.x"
   }
 }
+
 
 MANUAL STEP!!!
 
 Test that Vitest is set up correctly: https://nextjs.org/docs/app/building-your-application/testing/vitest#creating-your-first-vitest-unit-test
+
+
+MANUAL STEP!!!
+
+Create a new GitHub repo.
+
+
+MANUAL STEP!!!
+
+1. Retrieve your [Vercel Access Token](https://vercel.com/guides/how-do-i-use-a-vercel-api-access-token)
+2. Install the [Vercel CLI](https://vercel.com/cli) and run \`vercel login\`
+3. Inside your folder, run \`vercel link\` to create a new Vercel project
+4. Inside the generated \`.vercel\` folder, save the \`projectId\` and \`orgId\` from the \`project.json\`
+5. Inside GitHub, add \`VERCEL_TOKEN\`, \`VERCEL_ORG_ID\`, and \`VERCEL_PROJECT_ID\` as [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+
+
+MANUAL STEP!!!
+
+Commit changes and push to GitHub.
+
 EOF
