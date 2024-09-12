@@ -23,7 +23,6 @@ asdf reshim
 pnpx create-next-app@latest \
   "${project_name}" \
   --typescript \
-  --tailwind \
   --eslint \
   --app \
   --use-pnpm
