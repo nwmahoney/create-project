@@ -34,7 +34,15 @@ mv "${tmp_directory}/${project_name}" .
 rm -rf "${tmp_directory}"
 cd "${project_name}"
 
-pnpm install -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/dom
+pnpm install -D \
+  vitest \
+  @vitejs/plugin-react \
+  jsdom \
+  @testing-library/react \
+  @testing-library/dom \
+  @testing-library/jest-dom \
+  cypress \
+  start-server-and-test
 
 cat <<EOF >vitest.config.ts
 import { defineConfig } from 'vitest/config'
@@ -44,6 +52,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
+    setupFiles: './setupTests.ts',
   },
 })
 EOF
@@ -56,6 +65,8 @@ EOF
 mkdir -p .github/workflows
 cp "$script_directory/gha_cicd_workflow.yml" .github/workflows/cicd.yml
 
+cp "$script_directory/setupTests.ts" setupTests.ts
+
 git add --all
 git commit -m 'Initial commit from create-project.sh'
 
@@ -64,14 +75,18 @@ cat <<EOF
 
 MANUAL STEP!!!
 
-Add a test script to your package.json:
+Add scripts for testing to your package.json:
 
 {
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "vitest"
+    "lint": "next lint",
+    "test": "vitest",
+    "cypress:open": "cypress open",
+    "cypress:e2e:headless": "cypress run --e2e",
+    "e2e": "pnpm run build && start-server-and-test start http://127.0.0.1:8080 cypress:e2e:headless"
   }
 }
 
@@ -90,6 +105,11 @@ Specify NodeJS version in your package.json:
 MANUAL STEP!!!
 
 Test that Vitest is set up correctly: https://nextjs.org/docs/app/building-your-application/testing/vitest#creating-your-first-vitest-unit-test
+
+
+MANUAL STEP!!!
+
+Set up Cypress for E2E testing. Run \`pnpm run cypress:open\` and see [the docs](https://nextjs.org/docs/app/building-your-application/testing/cypress) for more info.
 
 
 MANUAL STEP!!!
